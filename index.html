@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="ru" data-font="inter" data-accent="crimson">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#08070a">
+<title>Horshmarny × TheFer*</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --text:#f5f5f7;
+    --text-dim:#6a6a72;
+    --text-faint:#3a3a42;
+    --line:rgba(255,255,255,0.07);
+    --panel:linear-gradient(180deg, #150c10 0%, #0e070a 100%);
+
+    --font-main:'Inter', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+
+    --blood:#c8102e;
+    --blood-bright:#ff2a3f;
+    --blood-rgb: 200,16,46;
+
+    --name-size: clamp(28px, 9.5vw, 74px);
+    --cross-size: clamp(20px, 5vw, 42px);
+  }
+
+  html[data-font="inter"]   { --font-main:'Inter', system-ui, sans-serif }
+  html[data-font="mono"]    { --font-main:'JetBrains Mono', monospace }
+  html[data-font="grotesk"] { --font-main:'Space Grotesk', system-ui, sans-serif }
+  html[data-font="serif"]   { --font-main:'Playfair Display', Georgia, serif }
+
+  html[data-accent="crimson"] { --blood:#c8102e; --blood-bright:#ff2a3f; --blood-rgb:200,16,46 }
+  html[data-accent="wine"]    { --blood:#8a1232; --blood-bright:#c73a5c; --blood-rgb:138,18,50 }
+  html[data-accent="ember"]   { --blood:#d4531f; --blood-bright:#ff7733; --blood-rgb:212,83,31 }
+  html[data-accent="plum"]    { --blood:#7a2b7a; --blood-bright:#c14fc1; --blood-rgb:122,43,122 }
+
+  html[data-animations="off"] *,
+  html[data-animations="off"] *::before,
+  html[data-animations="off"] *::after{
+    animation-duration:.01ms !important;
+    animation-delay:0s !important;
+    transition-duration:.01ms !important;
+  }
+  /* Если анимации выключены — сразу показываем контент главной */
+  html[data-animations="off"] .home-names{ display:none !important }
+  html[data-animations="off"] .home-content{ opacity:1 !important; transform:none !important; animation:none !important }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0;padding:0}
+
+  body{
+    background:
+      radial-gradient(ellipse 55% 40% at 50% 50%, rgba(var(--blood-rgb),0.10) 0%, transparent 70%),
+      radial-gradient(ellipse 120% 90% at 50% 50%, #12060a 0%, #08070a 55%, #030304 100%);
+    background-color:#050405;
+    color:var(--text);
+    font-family:var(--font-main);
+    overflow:hidden;position:relative;
+    min-height:100dvh;
+    min-height:100vh;
+    -webkit-user-select:none;user-select:none;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  .grid{
+    position:fixed;inset:0;pointer-events:none;z-index:1;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+    background-size:72px 72px;
+    -webkit-mask-image:radial-gradient(ellipse 60% 60% at center, black 0%, transparent 85%);
+            mask-image:radial-gradient(ellipse 60% 60% at center, black 0%, transparent 85%);
+  }
+  canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+
+  .corner{
+    position:fixed;
+    top:calc(env(safe-area-inset-top, 0px) + 18px);
+    font-family:var(--font-mono);
+    font-size: clamp(8px, 2vw, 10px);
+    letter-spacing:.28em;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    z-index:3;
+    opacity:0;
+    animation:fadeIn 1.2s ease 2.2s forwards;
+    pointer-events:none;
+  }
+  .corner.left{left:calc(env(safe-area-inset-left, 0px) + 20px)}
+  .corner.right{right:calc(env(safe-area-inset-right, 0px) + 20px)}
+
+  /* ==== Страницы ==== */
+  .page{
+    position:fixed;inset:0;
+    display:flex;flex-direction:column;
+    align-items:center;
+    text-align:center;
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 20px)
+      calc(env(safe-area-inset-right, 0px) + 20px)
+      calc(env(safe-area-inset-bottom, 0px) + 130px)
+      calc(env(safe-area-inset-left, 0px) + 20px);
+    z-index:4;
+    opacity:0;
+    pointer-events:none;
+    transform: translateY(6px);
+    transition: opacity .38s ease, transform .38s ease;
+    overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .page::-webkit-scrollbar{display:none}
+  .page.active{ opacity:1; pointer-events:auto; transform: translateY(0) }
+  .page > .page-inner{
+    margin: auto 0; width:100%;
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  /* ============================================================
+     ==== ГЛАВНАЯ: 2 фазы =======================================
+     ============================================================ */
+  .home-stage{
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+
+  /* --- ФАЗА 1: имена --- */
+  .home-names{
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: clamp(0px, 0.6vw, 4px);
+    line-height: 1;
+    pointer-events: none;
+    width: min(100%, 920px);
+    animation: blockOut .65s ease-in 2.15s forwards;
+  }
+  @keyframes blockOut{
+    0%{ opacity:1; transform: translate(-50%, -50%) scale(1); filter: blur(0) }
+    100%{ opacity:0; transform: translate(-50%, calc(-50% - 14px)) scale(1.03); filter: blur(10px) }
+  }
+
+  .name{
+    font-family:var(--font-main);
+    font-weight:600;
+    font-size:var(--name-size);
+    letter-spacing:-0.045em;
+    line-height:0.95;
+    color:var(--text);
+    display:block;
+    white-space:nowrap;
+    will-change: transform, opacity, filter;
+  }
+  html[data-font="serif"] .name{ font-weight:700; letter-spacing:-0.02em }
+  .name.left{ animation: riseIn 1.1s cubic-bezier(.16,1,.3,1) .25s both }
+  .name.right{ animation: riseIn 1.1s cubic-bezier(.16,1,.3,1) 1.15s both }
+  @keyframes riseIn{
+    0%{ opacity:0; transform: translateY(22px); filter: blur(14px) }
+    100%{ opacity:1; transform: translateY(0); filter: blur(0) }
+  }
+
+  .star{
+    color:var(--blood);
+    text-shadow:0 0 24px rgba(var(--blood-rgb),0.45);
+    margin-left:.02em;
+  }
+  .cross{
+    font-family:var(--font-main);
+    font-weight:300;
+    font-size:var(--cross-size);
+    color:var(--blood);
+    text-shadow:0 0 30px rgba(var(--blood-rgb),0.45), 0 0 60px rgba(var(--blood-rgb),.25);
+    line-height:1;
+    display:block;
+    margin: clamp(2px, 0.8vw, 8px) 0;
+    opacity:0;
+    animation:
+      crossIn .9s cubic-bezier(.2,1.4,.3,1) .78s both,
+      crossPulse 3.6s ease-in-out 1.9s infinite;
+  }
+  @keyframes crossIn{
+    0%{ opacity:0; transform: scale(.4); filter: blur(10px) }
+    100%{ opacity:1; transform: scale(1); filter: blur(0) }
+  }
+  @keyframes crossPulse{
+    0%,100%{ transform: scale(1); opacity:1 }
+    50%{ transform: scale(1.06); opacity:.9 }
+  }
+
+  /* --- ФАЗА 2: контент --- */
+  .home-content{
+    position: relative;
+    width: 100%;
+    display: flex; flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(16px);
+    animation: contentIn .9s cubic-bezier(.16,1,.3,1) 2.55s both;
+  }
+  @keyframes contentIn{
+    to{ opacity: 1; transform: translateY(0) }
+  }
+
+  .hero-image-wrap{
+    width: min(66vw, 260px);
+    margin: 0 auto clamp(18px, 3.5vw, 26px);
+    position: relative;
+  }
+  .hero-image{
+    width:100%;
+    display:block;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.055);
+    box-shadow:
+      0 24px 60px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(var(--blood-rgb),0.08),
+      0 0 60px rgba(var(--blood-rgb),0.15);
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(180deg, #150c10, #0a0608);
+  }
+  .hero-image-wrap::before{
+    content:'';
+    position:absolute;inset:-1px;
+    border-radius: 21px;
+    background: linear-gradient(180deg, rgba(var(--blood-rgb),0.5), transparent 40%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    padding: 1px;
+    pointer-events:none;
+  }
+
+  .hero-title{
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: clamp(20px, 5.5vw, 26px);
+    letter-spacing: -.03em;
+    color: var(--text);
+    line-height: 1.2;
+    margin: 0 0 10px;
+    max-width: min(88vw, 460px);
+  }
+  .hero-title .accent{
+    color: var(--blood-bright);
+  }
+
+  .hero-desc{
+    max-width: min(88vw, 460px);
+    margin: 0 auto clamp(22px, 4vw, 30px);
+    color: var(--text-dim);
+    font-size: clamp(12.5px, 3.2vw, 13.5px);
+    line-height: 1.6;
+    letter-spacing: .005em;
+  }
+  .hero-desc code{
+    font-family: var(--font-mono);
+    background: rgba(var(--blood-rgb), 0.10);
+    border: 1px solid rgba(var(--blood-rgb), 0.22);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: .9em;
+    color: var(--blood-bright);
+  }
+
+  /* --- Action card (главная функция) --- */
+  .action-card{
+    width: min(92vw, 460px);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 16px 15px 18px;
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 18px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text);
+    font-family: inherit;
+    box-shadow:
+      0 10px 28px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease;
+    -webkit-tap-highlight-color: transparent;
+    margin-bottom: 10px;
+  }
+  .action-card::before{
+    content: '';
+    position: absolute;
+    left: 0; top: 12px; bottom: 12px;
+    width: 2px;
+    background: var(--blood);
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 12px rgba(var(--blood-rgb), 0.5);
+  }
+  .action-card:active{
+    transform: scale(.98);
+    border-color: rgba(var(--blood-rgb), 0.35);
+  }
+  .action-icon{
+    width: 42px; height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+    display: grid; place-items: center;
+    color: #fff;
+    box-shadow:
+      0 8px 20px rgba(var(--blood-rgb), 0.45),
+      inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .action-icon svg{
+    width: 22px; height: 22px;
+    stroke: currentColor; stroke-width: 2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .action-text{
+    flex: 1;
+    display: flex; flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .action-title{
+    font-size: clamp(14px, 3.6vw, 15.5px);
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .action-sub{
+    font-family: var(--font-mono);
+    font-size: clamp(9.5px, 2.3vw, 10.5px);
+    letter-spacing: .08em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .action-arrow{
+    width: 18px; height: 18px;
+    stroke: var(--text-faint);
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+    transition: transform .2s, stroke .2s;
+  }
+  .action-card:active .action-arrow{
+    transform: translateX(3px);
+    stroke: var(--blood-bright);
+  }
+
+  /* ============================================================
+     ==== НОВОСТИ ===============================================
+     ============================================================ */
+  .news-wrap{
+    width: min(92vw, 520px);
+    display:flex; flex-direction:column;
+    gap: 14px;
+    text-align:left;
+    margin: auto 0;
+    padding-top: 8px;
+  }
+  .news-head{ text-align:center; margin-bottom: 10px }
+  .news-head .page-header{
+    font-family:var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 11px);
+    letter-spacing:.4em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .news-head .page-title{
+    font-family:var(--font-main);
+    font-weight:600;
+    font-size: clamp(26px, 7.5vw, 40px);
+    letter-spacing:-0.04em;
+    color:var(--text);
+    margin: 0;
+  }
+
+  .news-card{
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow:
+      0 10px 28px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+    position: relative;
+    overflow: hidden;
+    animation: cardIn .5s cubic-bezier(.2,1,.3,1) both;
+  }
+  .news-card::before{
+    content:'';
+    position:absolute;left:0;top:12px;bottom:12px;width:2px;
+    background: var(--blood);
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 12px rgba(var(--blood-rgb),0.5);
+  }
+  @keyframes cardIn{
+    from{opacity:0; transform: translateY(10px)}
+    to{opacity:1; transform: translateY(0)}
+  }
+
+  .news-meta{
+    display:flex; justify-content:space-between; align-items:center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .news-date{
+    font-family:var(--font-mono);
+    font-size: clamp(9.5px, 2.3vw, 10.5px);
+    letter-spacing:.16em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .news-tag{
+    font-family:var(--font-mono);
+    font-size: clamp(8.5px, 2.1vw, 9.5px);
+    letter-spacing:.22em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 99px;
+    background: rgba(var(--blood-rgb),0.12);
+    border: 1px solid rgba(var(--blood-rgb),0.28);
+    color: var(--blood-bright);
+    font-weight: 500;
+  }
+  .news-tag.fix{
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.10);
+    color: var(--text-dim);
+  }
+  .news-tag.update{
+    background: rgba(var(--blood-rgb),0.06);
+    border-color: rgba(var(--blood-rgb),0.20);
+  }
+  .news-title{
+    font-family:var(--font-main);
+    font-size: clamp(15px, 4vw, 17px);
+    font-weight: 600;
+    letter-spacing: -.01em;
+    color: var(--text);
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+  .news-text{
+    font-size: clamp(12.5px, 3.2vw, 13.5px);
+    line-height: 1.6;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* ==== ПРОФИЛЬ ==== */
+  .profile-card{
+    width: min(92vw, 420px);
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 24px;
+    padding: clamp(22px, 5vw, 32px) clamp(18px, 4.5vw, 28px);
+    box-shadow:
+      0 20px 50px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(var(--blood-rgb),0.05),
+      inset 0 1px 0 rgba(255,255,255,0.035);
+    position: relative;
+    text-align:center;
+  }
+  .profile-card::before{
+    content:'';
+    position:absolute;top:0;left:20%;right:20%;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(var(--blood-rgb),.55), transparent);
+  }
+  .avatar-wrap{
+    position: relative;
+    width: clamp(78px, 22vw, 96px);
+    height: clamp(78px, 22vw, 96px);
+    margin: 0 auto 16px;
+  }
+  .avatar-ring{
+    position:absolute;inset:-3px;
+    border-radius:50%;
+    background: conic-gradient(from 180deg, var(--blood) 0%, #2a0a12 40%, var(--blood-bright) 60%, #2a0a12 100%);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 3px));
+            mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 3px));
+    opacity:.9;
+    filter: drop-shadow(0 0 14px rgba(var(--blood-rgb),.35));
+  }
+  .avatar{
+    width:100%;height:100%;
+    border-radius:50%;
+    object-fit:cover;display:block;
+    background:#150c10;
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .avatar-fallback{
+    position:absolute;inset:0;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background: linear-gradient(180deg, #2a0f16, #150c10);
+    color: var(--blood);
+    font-family:var(--font-main);
+    font-weight:700;
+    font-size: clamp(28px, 8vw, 34px);
+    border:1px solid rgba(255,255,255,.06);
+    text-shadow: 0 0 20px rgba(var(--blood-rgb),0.45);
+  }
+  .profile-name{
+    font-family:var(--font-main);
+    font-weight:600;
+    font-size: clamp(20px, 5.5vw, 26px);
+    letter-spacing:-0.03em;
+    color: var(--text);
+    margin: 0 0 6px;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .profile-role{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    background: rgba(var(--blood-rgb),0.10);
+    border: 1px solid rgba(var(--blood-rgb),0.28);
+    color: var(--blood-bright);
+    font-family:var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 10.5px);
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .profile-role .role-dot{
+    width:6px;height:6px;border-radius:50%;
+    background: var(--blood-bright);
+    box-shadow: 0 0 8px rgba(var(--blood-rgb),0.45);
+    animation: rolePulse 2.4s ease-in-out infinite;
+  }
+  @keyframes rolePulse{ 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .profile-rows{
+    display:flex;flex-direction:column;
+    border-top: 1px solid var(--line);
+    margin-top: 4px;
+  }
+  .prow{
+    display:flex; justify-content:space-between; align-items:center;
+    gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--line);
+    font-size: clamp(12px, 3.2vw, 13.5px);
+    text-align:left;
+  }
+  .pkey{
+    font-family:var(--font-mono);
+    font-size: clamp(9.5px, 2.4vw, 10.5px);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+  .pval{
+    font-weight: 500;
+    color: var(--text);
+    text-align:right;
+    word-break: break-word;
+    overflow:hidden;text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+    min-width:0;
+  }
+  .pval.mono{
+    font-family:var(--font-mono);
+    font-size: clamp(11px, 3vw, 12.5px);
+  }
+  .pval.dim{ color: var(--text-dim) }
+  .pval .copy-btn{
+    background:none;border:none;color:inherit;
+    font:inherit;padding:0;cursor:pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .pval .copy-btn svg{
+    width: 12px;height:12px;
+    stroke: currentColor; stroke-width: 2;
+    fill:none; stroke-linecap: round; stroke-linejoin: round;
+    opacity:.5;
+  }
+
+  /* ==== НАСТРОЙКИ ==== */
+  .settings-wrap{
+    width: min(92vw, 460px);
+    display:flex; flex-direction:column;
+    gap: 22px;
+    text-align:left;
+    margin: auto 0;
+  }
+  .settings-head{ text-align:center; margin-bottom: 6px }
+  .settings-head .page-header{
+    font-family:var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 11px);
+    letter-spacing:.4em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .settings-head .page-title{
+    font-family:var(--font-main);
+    font-weight:600;
+    font-size: clamp(26px, 7.5vw, 40px);
+    letter-spacing:-0.04em;
+    color:var(--text);
+    margin: 0;
+  }
+  .setting-section{ display:flex;flex-direction:column;gap: 10px }
+  .section-label{
+    font-family:var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 10.5px);
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+    padding-left: 4px;
+  }
+  .setting-panel{
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 18px;
+    padding: 4px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .setting-row{
+    display:flex; justify-content:space-between; align-items:center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .setting-row:last-child{ border-bottom:none }
+  .setting-info{ display:flex; flex-direction:column; gap:3px; min-width:0; text-align:left }
+  .setting-title{
+    font-family:var(--font-main);
+    font-size: clamp(13px, 3.3vw, 14.5px);
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -.01em;
+  }
+  .setting-desc{
+    font-family:var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 10.5px);
+    letter-spacing: .05em;
+    color: var(--text-faint);
+  }
+
+  .font-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+  .font-opt{
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+    -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
+  }
+  .font-opt:active{ transform: scale(.98) }
+  .font-opt.active{
+    border-color: rgba(var(--blood-rgb),0.55);
+    background: rgba(var(--blood-rgb),0.09);
+    box-shadow: 0 0 0 1px rgba(var(--blood-rgb),0.2);
+  }
+  .font-sample{
+    font-size: clamp(20px, 5.5vw, 26px);
+    line-height: 1;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 34px;
+    text-align: center;
+  }
+  .font-meta{ display:flex; flex-direction:column; gap:2px; min-width:0 }
+  .font-name{
+    font-size: clamp(11px, 2.7vw, 12px);
+    font-weight: 600;
+    color: var(--text);
+  }
+  .font-tag{
+    font-family: var(--font-mono);
+    font-size: clamp(8.5px, 2vw, 9.5px);
+    letter-spacing: .08em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+
+  .accent-row{
+    display: flex; gap: 10px; justify-content: center;
+    padding: 14px 16px; flex-wrap: wrap;
+  }
+  .accent-swatch{
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+    transition: transform .18s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .accent-swatch::after{
+    content:'';position:absolute;inset:-3px;
+    border-radius:50%;border: 2px solid transparent;
+    transition: border-color .22s;
+  }
+  .accent-swatch.active::after{ border-color: rgba(255,255,255,.65) }
+  .accent-swatch:active{ transform: scale(.92) }
+  .swatch-crimson{ background: radial-gradient(circle at 30% 30%, #ff2a3f, #c8102e 70%) }
+  .swatch-wine{    background: radial-gradient(circle at 30% 30%, #c73a5c, #8a1232 70%) }
+  .swatch-ember{   background: radial-gradient(circle at 30% 30%, #ff7733, #d4531f 70%) }
+  .swatch-plum{    background: radial-gradient(circle at 30% 30%, #c14fc1, #7a2b7a 70%) }
+
+  .switch{
+    position: relative;
+    width: 46px; height: 26px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.06);
+    cursor: pointer;
+    padding:0; flex-shrink: 0;
+    transition: background .25s ease, border-color .25s ease;
+  }
+  .switch::after{
+    content:'';position:absolute; top: 2px; left: 2px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4);
+    transition: transform .25s cubic-bezier(.2,1,.3,1);
+  }
+  .switch.on{
+    background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+    border-color: rgba(var(--blood-rgb),.6);
+    box-shadow: 0 0 14px rgba(var(--blood-rgb),0.35);
+  }
+  .switch.on::after{ transform: translateX(20px) }
+
+  .reset-btn{
+    width: 100%;
+    padding: 14px 16px;
+    background: rgba(var(--blood-rgb),0.08);
+    border: 1px solid rgba(var(--blood-rgb),0.3);
+    border-radius: 14px;
+    color: var(--blood-bright);
+    font-family: var(--font-main);
+    font-size: clamp(12.5px, 3.2vw, 13.5px);
+    font-weight: 600;
+    cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    gap: 8px;
+    transition: background .2s ease, transform .15s ease;
+  }
+  .reset-btn:active{ transform: scale(.98) }
+  .reset-btn svg{
+    width: 16px;height:16px;
+    stroke: currentColor; fill: none; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  /* ==== ТОСТ ==== */
+  .toast{
+    position: fixed; left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 100px);
+    transform: translate(-50%, 24px);
+    background: rgba(20,12,16,0.96);
+    border: 1px solid rgba(var(--blood-rgb),0.4);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 99px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity .3s ease, transform .3s cubic-bezier(.2,1,.3,1);
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+    white-space: nowrap; max-width: 88vw;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .toast.show{ opacity: 1; transform: translate(-50%, 0) }
+
+  /* ==== MODAL: Превью ==== */
+  .modal{
+    position: fixed; inset: 0;
+    z-index: 200;
+    display: flex; align-items: flex-end; justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .modal.show{ opacity: 1; pointer-events: auto }
+
+  .modal-backdrop{
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  .modal-panel{
+    position: relative;
+    width: min(100%, 520px);
+    max-height: 92dvh;
+    max-height: 92vh;
+    background: linear-gradient(180deg, #170d12 0%, #0e070a 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-bottom: none;
+    border-radius: 26px 26px 0 0;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(var(--blood-rgb),0.08);
+    transform: translateY(30px);
+    transition: transform .35s cubic-bezier(.2,1,.3,1);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .modal.show .modal-panel{ transform: translateY(0) }
+
+  .modal-handle{
+    width: 40px; height: 4px;
+    border-radius: 99px;
+    background: rgba(255,255,255,0.15);
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+  .modal-head{
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 22px 8px;
+    flex-shrink: 0;
+  }
+  .modal-title{
+    font-family: var(--font-main);
+    font-weight: 600;
+    font-size: clamp(17px, 4.5vw, 20px);
+    letter-spacing: -.02em;
+    color: var(--text);
+    margin: 0;
+  }
+  .modal-close{
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: grid; place-items: center;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .modal-close:active{ transform: scale(.94) }
+  .modal-close svg{
+    width: 14px; height: 14px;
+    stroke: currentColor; stroke-width: 2.2;
+    fill: none; stroke-linecap: round;
+  }
+  .modal-body{
+    padding: 8px 22px 22px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .form-field{ display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px }
+  .form-label{
+    font-family: var(--font-mono);
+    font-size: clamp(9px, 2.2vw, 10.5px);
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding-left: 4px;
+  }
+  .form-input,
+  .form-textarea{
+    width: 100%;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 13px 15px;
+    color: var(--text);
+    font-family: var(--font-main);
+    font-size: clamp(13.5px, 3.5vw, 14.5px);
+    letter-spacing: -.005em;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+    -webkit-appearance: none;
+    resize: none;
+  }
+  .form-textarea{
+    min-height: 140px;
+    line-height: 1.55;
+    font-family: var(--font-main);
+  }
+  .form-input::placeholder,
+  .form-textarea::placeholder{ color: var(--text-faint) }
+  .form-input:focus,
+  .form-textarea:focus{
+    border-color: rgba(var(--blood-rgb),0.55);
+    box-shadow: 0 0 0 3px rgba(var(--blood-rgb),0.12);
+    background: rgba(0,0,0,0.5);
+  }
+
+  .segmented{
+    display: flex;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .seg{
+    flex: 1;
+    background: none; border: none;
+    color: var(--text-dim);
+    font-family: var(--font-main);
+    font-size: clamp(12px, 3vw, 13px);
+    font-weight: 500;
+    padding: 9px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background .22s, color .22s, box-shadow .22s, opacity .2s;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px;
+  }
+  .seg.active{
+    background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(var(--blood-rgb),0.35), inset 0 1px 0 rgba(255,255,255,0.16);
+  }
+  .seg:disabled,
+  .seg.disabled{ opacity: .35; cursor: not-allowed }
+  .seg svg{
+    width: 13px; height: 13px;
+    stroke: currentColor; stroke-width: 2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .primary-btn{
+    width: 100%;
+    padding: 15px 18px;
+    background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-family: var(--font-main);
+    font-size: clamp(13.5px, 3.6vw, 15px);
+    font-weight: 600;
+    letter-spacing: .01em;
+    cursor: pointer;
+    box-shadow:
+      0 12px 30px rgba(var(--blood-rgb),0.4),
+      inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: transform .15s, box-shadow .2s, opacity .2s;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .primary-btn:active{ transform: scale(.98) }
+  .primary-btn:disabled{ opacity: .5; cursor: not-allowed; box-shadow: none }
+  .primary-btn svg{
+    width: 17px; height: 17px;
+    stroke: currentColor; stroke-width: 2.2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .secondary-btn{
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    color: var(--text-dim);
+    font-family: var(--font-main);
+    font-size: clamp(12.5px, 3.2vw, 13.5px);
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 10px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .secondary-btn:active{ background: rgba(255,255,255,0.07) }
+
+  .success-block{ text-align: center; padding: 12px 0 0 }
+  .success-icon{
+    width: 64px; height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(var(--blood-rgb),0.25), rgba(var(--blood-rgb),0.08));
+    border: 1px solid rgba(var(--blood-rgb),0.4);
+    display: grid; place-items: center;
+    box-shadow: 0 0 30px rgba(var(--blood-rgb),0.25);
+    animation: successPop .5s cubic-bezier(.2,1.5,.4,1) both;
+  }
+  .success-icon svg{
+    width: 30px; height: 30px;
+    stroke: var(--blood-bright); stroke-width: 2.5;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+  @keyframes successPop{
+    0%{ transform: scale(.4); opacity: 0 }
+    100%{ transform: scale(1); opacity: 1 }
+  }
+  .success-title{
+    font-family: var(--font-main);
+    font-size: clamp(17px, 4.5vw, 20px);
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -.02em;
+  }
+  .success-sub{
+    font-size: clamp(12.5px, 3.2vw, 13.5px);
+    color: var(--text-dim);
+    margin: 0 0 20px;
+  }
+
+  .link-box{
+    display: flex;
+    gap: 8px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 6px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .link-value{
+    flex: 1;
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 2.9vw, 12.5px);
+    color: var(--text);
+    letter-spacing: -.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    user-select: all;
+    -webkit-user-select: all;
+  }
+  .copy-link{
+    flex-shrink: 0;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, var(--blood-bright), var(--blood));
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: var(--font-main);
+    font-size: clamp(11.5px, 3vw, 12.5px);
+    font-weight: 600;
+    letter-spacing: .02em;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 12px rgba(var(--blood-rgb),0.35), inset 0 1px 0 rgba(255,255,255,0.16);
+    transition: transform .15s;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+  }
+  .copy-link:active{ transform: scale(.96) }
+  .copy-link svg{
+    width: 13px; height: 13px;
+    stroke: currentColor; stroke-width: 2.2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .open-link{
+    display: inline-flex;
+    align-items: center; gap: 6px;
+    padding: 8px 14px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: clamp(10.5px, 2.6vw, 11.5px);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 99px;
+    transition: color .2s, border-color .2s;
+  }
+  .open-link:hover{ color: var(--text); border-color: rgba(255,255,255,0.15) }
+  .open-link svg{
+    width: 12px; height: 12px;
+    stroke: currentColor; stroke-width: 2;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .modal-spinner{
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin{ to { transform: rotate(360deg) } }
+
+  /* ==== ЛОАДЕР ==== */
+  .loader{
+    position:fixed;
+    bottom: clamp(110px, 18vh, 160px);
+    left:50%; transform: translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;
+    gap:12px;
+    z-index:6;
+    width: clamp(200px, 62vw, 340px);
+    opacity:0;
+    animation:
+      fadeIn 1s ease .5s both,
+      loaderOut .7s ease 3.05s forwards;
+    pointer-events:none;
+  }
+  html[data-animations="off"] .loader{ display:none }
+
+  .loader-bar{
+    width:100%; height:1px;
+    background:rgba(255,255,255,0.06);
+    position:relative; overflow:hidden;
+  }
+  .loader-fill{
+    position:absolute;top:0;left:0;bottom:0;width:0;
+    background: linear-gradient(90deg, transparent, var(--blood) 60%, var(--blood-bright));
+    box-shadow:0 0 10px rgba(var(--blood-rgb),0.45);
+    animation: fillBar 3s cubic-bezier(.55,.05,.35,1) forwards;
+  }
+  @keyframes fillBar{
+    0%{ width:0 } 20%{ width:18% } 50%{ width:52% } 78%{ width:80% } 100%{ width:100% }
+  }
+  .loader-meta{
+    display:flex;justify-content:space-between;
+    width:100%;
+    font-family:var(--font-mono);
+    font-size: clamp(8px, 1.9vw, 10px);
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .loader-meta .pct{ color:var(--blood); font-variant-numeric: tabular-nums }
+  @keyframes loaderOut{
+    to{ opacity:0; transform: translateX(-50%) translateY(14px) }
+  }
+
+  /* ==== ТАББАР ==== */
+  .tabbar{
+    position:fixed;
+    left:50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
+    transform: translate(-50%, 30px);
+    width: min(92vw, 460px);
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 2px;
+    padding: 8px 6px;
+    background: linear-gradient(180deg, #1a0f13 0%, #12080c 100%);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 22px;
+    box-shadow:
+      0 16px 44px rgba(0,0,0,0.65),
+      0 0 0 1px rgba(var(--blood-rgb),0.05),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,1,.3,1);
+  }
+  .tabbar.show{
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+  .tab{
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 5px;
+    padding: 6px 2px;
+    background: none; border: none;
+    color: var(--text);
+    cursor: pointer;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .18s ease;
+  }
+  .tab:active{ transform: scale(.95) }
+  .tab-icon{
+    width: 36px; height: 36px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    color: #fff;
+    transition: background .28s ease, box-shadow .28s ease;
+  }
+  .tab-icon svg{
+    width: 20px; height: 20px;
+    stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round;
+    fill: none;
+  }
+  .tab-label{
+    font-size: clamp(9.5px, 2.4vw, 11px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #fff; opacity: .85;
+    transition: opacity .25s ease;
+  }
+  .tab.active .tab-icon{
+    background: linear-gradient(180deg, var(--blood-bright) 0%, var(--blood) 100%);
+    box-shadow:
+      0 8px 22px rgba(var(--blood-rgb),0.5),
+      0 0 0 1px rgba(var(--blood-rgb),0.4),
+      inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .tab.active .tab-label{ opacity: 1 }
+
+  /* ==== Адаптив ==== */
+  @media (min-width:768px){
+    :root{
+      --name-size: clamp(52px, 7vw, 90px);
+      --cross-size: clamp(34px, 4.2vw, 58px);
+    }
+  }
+  @media (max-width:340px){
+    :root{
+      --name-size: clamp(24px, 9vw, 36px);
+      --cross-size: 20px;
+    }
+    .tabbar{padding: 6px 4px}
+    .tab-icon{width: 32px; height: 32px}
+    .tab-icon svg{width: 18px;height:18px}
+    .tab-label{font-size: 9px}
+    .font-grid{ grid-template-columns: 1fr }
+  }
+  @media (max-height:500px) and (orientation:landscape){
+    :root{
+      --name-size: clamp(22px, 6vh, 42px);
+      --cross-size: clamp(16px, 4vh, 30px);
+    }
+    .loader{bottom: 84px}
+    .corner{display:none}
+    .page{padding-bottom: 100px}
+    .tabbar{bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); padding: 4px 6px}
+    .tab{gap: 2px; padding: 4px 2px}
+    .tab-icon{width: 28px;height:28px;border-radius:10px}
+    .tab-icon svg{width:16px;height:16px}
+    .tab-label{font-size: 9px}
+    .hero-image-wrap{ max-width: 180px }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition:none !important}
+    .home-names{ display:none }
+    .home-content{ opacity:1; transform:none }
+  }
+</style>
+</head>
+<body>
+<div class="grid"></div>
+<canvas id="fx"></canvas>
+
+<div class="corner left">N°01</div>
+<div class="corner right">MMXXV</div>
+
+<!-- ============ ГЛАВНАЯ ============ -->
+<div class="page active" data-page="home">
+  <div class="page-inner">
+    <div class="home-stage">
+
+      <!-- ФАЗА 1: имена -->
+      <div class="home-names" id="homeNames">
+        <div class="name left">Horshmarny</div>
+        <div class="cross">×</div>
+        <div class="name right">TheFer<span class="star">*</span></div>
+      </div>
+
+      <!-- ФАЗА 2: контент -->
+      <div class="home-content" id="homeContent">
+        <div class="hero-image-wrap">
+          <img class="hero-image" src="anim1.png" alt="Horshmarny × TheFer"
+               onerror="this.style.display='none';this.parentElement.style.display='none'">
+        </div>
+
+        <h1 class="hero-title">
+          Официальное приложение<br>
+          <span class="accent">Horshmarny × TheFer</span>
+        </h1>
+
+        <p class="hero-desc">
+          Всё в одном месте: свежие новости проекта, эксклюзивный контент
+          и полезные инструменты для сообщества. Создавай быстрые превью
+          через <code>Telegraph</code> — от бота или анонимно.
+        </p>
+
+        <button class="action-card" id="openPreviewModal" type="button">
+          <span class="action-icon">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 4h16v12H7l-3 3V4Z"/>
+              <path d="M8 9h8M8 12h5"/>
+            </svg>
+          </span>
+          <span class="action-text">
+            <span class="action-title">Создать превью</span>
+            <span class="action-sub">Публикация через Telegraph</span>
+          </span>
+          <svg class="action-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+
+        <button class="action-card" id="openNewsFromHome" type="button">
+          <span class="action-icon" style="background:linear-gradient(180deg,#2a1016,#150c10);box-shadow:inset 0 0 0 1px rgba(var(--blood-rgb),0.3)">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/>
+              <path d="M8 7h7M8 11h7M8 15h5"/>
+            </svg>
+          </span>
+          <span class="action-text">
+            <span class="action-title">Новости проекта</span>
+            <span class="action-sub">Все обновления и фиксы</span>
+          </span>
+          <svg class="action-arrow" viewBox="0 0 24 24">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ НОВОСТИ ============ -->
+<div class="page" data-page="news">
+  <div class="news-wrap">
+    <div class="news-head">
+      <div class="page-header">Section 02</div>
+      <h1 class="page-title">Новости</h1>
+    </div>
+    <div id="newsList"></div>
+  </div>
+</div>
+
+<!-- ============ ПРОФИЛЬ ============ -->
+<div class="page" data-page="profile">
+  <div class="page-inner">
+    <div class="profile-card">
+      <div class="avatar-wrap">
+        <div class="avatar-ring"></div>
+        <img class="avatar" id="avatar" alt="" style="display:none">
+        <div class="avatar-fallback" id="avatarFallback">?</div>
+      </div>
+      <h2 class="profile-name" id="profileName">…</h2>
+      <div class="profile-role" id="profileRole">
+        <span class="role-dot"></span>
+        <span id="profileRoleText">…</span>
+      </div>
+      <div class="profile-rows">
+        <div class="prow">
+          <span class="pkey">ID</span>
+          <span class="pval mono">
+            <button class="copy-btn" id="copyId" type="button">
+              <span id="profileId">—</span>
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </span>
+        </div>
+        <div class="prow">
+          <span class="pkey">Username</span>
+          <span class="pval mono dim" id="profileUsername">—</span>
+        </div>
+        <div class="prow">
+          <span class="pkey">Запуск бота</span>
+          <span class="pval mono" id="profileStarted">—</span>
+        </div>
+        <div class="prow">
+          <span class="pkey">TG язык</span>
+          <span class="pval mono dim" id="profileLang">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ НАСТРОЙКИ ============ -->
+<div class="page" data-page="settings">
+  <div class="settings-wrap">
+    <div class="settings-head">
+      <div class="page-header">Section 04</div>
+      <h1 class="page-title">Настройки</h1>
+    </div>
+
+    <div class="setting-section">
+      <div class="section-label">Оформление</div>
+      <div class="setting-panel">
+        <div class="setting-row" style="border-bottom:none;flex-direction:column;align-items:stretch;gap:8px">
+          <div class="setting-info">
+            <div class="setting-title">Акцентный цвет</div>
+            <div class="setting-desc">Цвет свечения и активных элементов</div>
+          </div>
+          <div class="accent-row" id="accentControl">
+            <button class="accent-swatch swatch-crimson" data-accent="crimson" title="Crimson"></button>
+            <button class="accent-swatch swatch-wine"    data-accent="wine"    title="Wine"></button>
+            <button class="accent-swatch swatch-ember"   data-accent="ember"   title="Ember"></button>
+            <button class="accent-swatch swatch-plum"    data-accent="plum"    title="Plum"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="setting-panel" style="padding: 12px">
+        <div class="setting-info" style="padding: 0 4px 10px">
+          <div class="setting-title">Шрифт</div>
+          <div class="setting-desc">Основной шрифт интерфейса</div>
+        </div>
+        <div class="font-grid" id="fontControl">
+          <button class="font-opt" data-font="inter">
+            <span class="font-sample" style="font-family:'Inter'">Aa</span>
+            <span class="font-meta">
+              <span class="font-name">Inter</span>
+              <span class="font-tag">Стандартный</span>
+            </span>
+          </button>
+          <button class="font-opt" data-font="mono">
+            <span class="font-sample" style="font-family:'JetBrains Mono'">Aa</span>
+            <span class="font-meta">
+              <span class="font-name">Mono</span>
+              <span class="font-tag">Моноширинный</span>
+            </span>
+          </button>
+          <button class="font-opt" data-font="grotesk">
+            <span class="font-sample" style="font-family:'Space Grotesk'">Aa</span>
+            <span class="font-meta">
+              <span class="font-name">Grotesk</span>
+              <span class="font-tag">Геометрия</span>
+            </span>
+          </button>
+          <button class="font-opt" data-font="serif">
+            <span class="font-sample" style="font-family:'Playfair Display'">Aa</span>
+            <span class="font-meta">
+              <span class="font-name">Playfair</span>
+              <span class="font-tag">С засечками</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-section">
+      <div class="section-label">Поведение</div>
+      <div class="setting-panel">
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-title">Анимации</div>
+            <div class="setting-desc">Загрузочный экран и переходы</div>
+          </div>
+          <button class="switch" id="switchAnimations" type="button"></button>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-title">Вибрация</div>
+            <div class="setting-desc">Тактильный отклик в Telegram</div>
+          </div>
+          <button class="switch" id="switchHaptics" type="button"></button>
+        </div>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" type="button">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      <span>Сбросить настройки</span>
+    </button>
+  </div>
+</div>
+
+<!-- ============ ЛОАДЕР ============ -->
+<div class="loader" id="loader">
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-meta">
+    <span>Loading</span>
+    <span class="pct" id="pct">0%</span>
+  </div>
+</div>
+
+<!-- ============ ТОСТ ============ -->
+<div class="toast" id="toast"></div>
+
+<!-- ============ МОДАЛКА ПРЕВЬЮ ============ -->
+<div class="modal" id="previewModal" role="dialog" aria-hidden="true">
+  <div class="modal-backdrop" data-close="1"></div>
+  <div class="modal-panel">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <h2 class="modal-title">Создать превью</h2>
+      <button class="modal-close" data-close="1" type="button" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- ФОРМА -->
+      <div id="stepForm">
+        <div class="form-field">
+          <label class="form-label">Заголовок</label>
+          <input class="form-input" id="pvTitle" type="text" maxlength="256" placeholder="Например: Обновление 1.2">
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Текст</label>
+          <textarea class="form-textarea" id="pvText" placeholder="Полный текст превью…"></textarea>
+        </div>
+
+        <div class="form-field">
+          <label class="form-label">Публикация</label>
+          <div class="segmented" id="pvVisibility">
+            <button class="seg active" data-vis="bot" type="button">
+              <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/><path d="M12 4v4M9 4h6"/></svg>
+              <span>От бота</span>
+            </button>
+            <button class="seg" data-vis="anon" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 3 3 9l9 6 9-6-9-6Z"/><path d="m6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+              <span>Анонимно</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="primary-btn" id="pvSubmit" type="button">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          <span>Создать превью</span>
+        </button>
+      </div>
+
+      <!-- РЕЗУЛЬТАТ -->
+      <div id="stepResult" style="display:none">
+        <div class="success-block">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>
+          </div>
+          <h3 class="success-title">Превью создано</h3>
+          <p class="success-sub">Ссылку можно скопировать и отправить куда угодно</p>
+
+          <div class="link-box">
+            <div class="link-value" id="pvLink">—</div>
+            <button class="copy-link" id="pvCopy" type="button">
+              <svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              <span>Копировать</span>
+            </button>
+          </div>
+
+          <a class="open-link" id="pvOpen" href="#" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M20 14v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5"/></svg>
+            Открыть в Telegraph
+          </a>
+        </div>
+
+        <button class="secondary-btn" id="pvReset" type="button">Создать ещё</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ТАББАР ============ -->
+<nav class="tabbar" id="tabbar" role="tablist" aria-label="Навигация">
+  <button class="tab active" data-tab="home" role="tab" aria-selected="true">
+    <span class="tab-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+    </span>
+    <span class="tab-label">Главная</span>
+  </button>
+
+  <button class="tab" data-tab="news" role="tab" aria-selected="false">
+    <span class="tab-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"/>
+        <path d="M8 7h7M8 11h7M8 15h5"/>
+      </svg>
+    </span>
+    <span class="tab-label">Новости</span>
+  </button>
+
+  <button class="tab" data-tab="profile" role="tab" aria-selected="false">
+    <span class="tab-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.1 3.6-7 8-7s8 2.9 8 7"/></svg>
+    </span>
+    <span class="tab-label">Профиль</span>
+  </button>
+
+  <button class="tab" data-tab="settings" role="tab" aria-selected="false">
+    <span class="tab-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.03 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1.11-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.7 1.7 0 0 0 .34-1.87 1.7 1.7 0 0 0-1.55-1.03H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1.11 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.87.34H9a1.7 1.7 0 0 0 1.03-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1.11 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.34 1.87V9a1.7 1.7 0 0 0 1.55 1.03H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.03z"/>
+      </svg>
+    </span>
+    <span class="tab-label">Настройки</span>
+  </button>
+</nav>
+
+<script>
+(function(){
+  /* ============================================================
+     ==== РОЛИ ==================================================
+     ============================================================ */
+  const OWNER_ID = 8552283918;
+  const ADMIN_IDS = [];
+
+  /* ============================================================
+     ==== НОВОСТИ ===============================================
+     tag: 'release' | 'update' | 'fix'
+     ============================================================ */
+  const NEWS = [
+    {
+      date: '2025-01-20',
+      tag: 'release',
+      title: 'Запуск приложения',
+      text: 'Мы выпустили первую версию приложения Horshmarny × TheFer. Доступны главная, новости, профиль и настройки.'
+    },
+    {
+      date: '2025-01-18',
+      tag: 'update',
+      title: 'Функция «Создать превью»',
+      text: 'На главной появилась возможность быстро создавать превью через Telegraph — с выбором «От бота» или «Анонимно» и кнопкой копирования ссылки.'
+    },
+    {
+      date: '2025-01-15',
+      tag: 'fix',
+      title: 'Мелкие исправления',
+      text: 'Поправили адаптивность под узкие экраны и улучшили вибрацию на iOS.'
+    }
+  ];
+  const TAG_LABEL = { release: 'Release', update: 'Update', fix: 'Fix' };
+
+  function renderNews(){
+    const wrap = document.getElementById('newsList');
+    wrap.innerHTML = '';
+    NEWS.forEach((n, i) => {
+      const el = document.createElement('article');
+      el.className = 'news-card';
+      el.style.animationDelay = (i * 0.06) + 's';
+      const d = new Date(n.date);
+      const pad = x => String(x).padStart(2,'0');
+      const dateStr = `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
+      el.innerHTML = `
+        <div class="news-meta">
+          <span class="news-date">${dateStr}</span>
+          <span class="news-tag ${n.tag}">${TAG_LABEL[n.tag] || n.tag}</span>
+        </div>
+        <h3 class="news-title"></h3>
+        <p class="news-text"></p>
+      `;
+      el.querySelector('.news-title').textContent = n.title;
+      el.querySelector('.news-text').textContent = n.text;
+      wrap.appendChild(el);
+    });
+  }
+  renderNews();
+
+  /* ============================================================
+     ==== Telegram WebApp =======================================
+     ============================================================ */
+  const tg = window.Telegram && window.Telegram.WebApp;
+  if (tg){
+    tg.ready();
+    tg.expand();
+    try { tg.setHeaderColor && tg.setHeaderColor('#08070a'); } catch(e){}
+    try { tg.setBackgroundColor && tg.setBackgroundColor('#08070a'); } catch(e){}
+  }
+  const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+  const isOwner = user && OWNER_ID && user.id === OWNER_ID;
+  const isAdmin = user && (isOwner || ADMIN_IDS.includes(user.id));
+  const canAnon = !!isAdmin;
+
+  /* ============================================================
+     ==== НАСТРОЙКИ =============================================
+     ============================================================ */
+  const STORAGE_KEY = 'horshmarny_settings_v2';
+  const Settings = {
+    defaults: { font:'inter', accent:'crimson', animations:true, haptics:true },
+    data: {},
+    load(){
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){}
+      this.data = { ...this.defaults, ...saved };
+    },
+    save(){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(this.data)); } catch(e){} },
+    set(k,v){ this.data[k]=v; this.save() },
+    reset(){ this.data={}; try{ localStorage.removeItem(STORAGE_KEY); }catch(e){} }
+  };
+  Settings.load();
+
+  /* ============================================================
+     ==== HAPTICS ===============================================
+     ============================================================ */
+  function haptic(type, style){
+    if (!Settings.data.haptics) return;
+    if (!tg || !tg.HapticFeedback) return;
+    try {
+      if (type === 'impact') tg.HapticFeedback.impactOccurred(style || 'light');
+      else if (type === 'notify') tg.HapticFeedback.notificationOccurred(style || 'success');
+      else if (type === 'selection') tg.HapticFeedback.selectionChanged();
+    } catch(e){}
+  }
+
+  /* ============================================================
+     ==== APPLY SETTINGS ========================================
+     ============================================================ */
+  function applySettings(){
+    const s = Settings.data;
+    document.documentElement.dataset.font = s.font;
+    document.documentElement.dataset.accent = s.accent;
+    document.documentElement.dataset.animations = s.animations ? 'on' : 'off';
+
+    document.querySelectorAll('#fontControl .font-opt').forEach(b =>
+      b.classList.toggle('active', b.dataset.font === s.font));
+    document.querySelectorAll('#accentControl .accent-swatch').forEach(b =>
+      b.classList.toggle('active', b.dataset.accent === s.accent));
+    document.getElementById('switchAnimations').classList.toggle('on', s.animations);
+    document.getElementById('switchHaptics').classList.toggle('on', s.haptics);
+
+    if (!s.animations){
+      const l = document.getElementById('loader');
+      if (l) l.style.display = 'none';
+      document.getElementById('tabbar').classList.add('show');
+    }
+  }
+
+  /* ============================================================
+     ==== TOAST =================================================
+     ============================================================ */
+  let toastTimer = null;
+  function showToast(text){
+    const el = document.getElementById('toast');
+    el.textContent = text;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 1700);
+  }
+
+  /* ============================================================
+     ==== ПРОФИЛЬ ===============================================
+     ============================================================ */
+  function fillProfile(u){
+    if (!u){
+      u = { id: 0, first_name: 'Гость', last_name:'', username:'guest',
+            language_code: (navigator.language || 'ru').slice(0,2), photo_url:'' };
+    }
+    const img = document.getElementById('avatar');
+    const fb  = document.getElementById('avatarFallback');
+    if (u.photo_url){
+      img.src = u.photo_url;
+      img.style.display = 'block'; fb.style.display = 'none';
+      img.onerror = () => { img.style.display='none'; fb.style.display='grid' };
+    } else {
+      const initials = ((u.first_name||'?')[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase();
+      fb.textContent = initials || '?';
+    }
+    const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || 'Без имени';
+    document.getElementById('profileName').textContent = fullName;
+    document.getElementById('profileId').textContent = u.id || '—';
+    document.getElementById('profileUsername').textContent =
+      u.username ? '@' + u.username : 'скрыт';
+
+    const langMap = { ru:'Русский', en:'English', uk:'Українська', be:'Беларуская', kk:'Қазақша', de:'Deutsch', es:'Español', fr:'Français', tr:'Türkçe', it:'Italiano' };
+    document.getElementById('profileLang').textContent =
+      langMap[u.language_code] || (u.language_code || '—').toUpperCase();
+
+    const roleText = document.getElementById('profileRoleText');
+    const roleBox  = document.getElementById('profileRole');
+    if (u.id && OWNER_ID && u.id === OWNER_ID){
+      roleText.textContent = 'Владелец';
+      roleBox.style.background = 'rgba(var(--blood-rgb),0.18)';
+      roleBox.style.borderColor = 'rgba(var(--blood-rgb),0.5)';
+    } else if (u.id && ADMIN_IDS.includes(u.id)){
+      roleText.textContent = 'Администратор';
+    } else {
+      roleText.textContent = 'Пользователь';
+      roleBox.style.background = '';
+      roleBox.style.borderColor = '';
+    }
+
+    const LS_KEY = 'horshmarny_started_at_' + (u.id || 'guest');
+    let startedAt = localStorage.getItem(LS_KEY);
+    if (!startedAt){
+      startedAt = new Date().toISOString();
+      try { localStorage.setItem(LS_KEY, startedAt); } catch(e){}
+    }
+    const d = new Date(startedAt);
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('profileStarted').textContent =
+      `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} · ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  fillProfile(user);
+
+  document.getElementById('copyId').addEventListener('click', async () => {
+    const id = document.getElementById('profileId').textContent;
+    try {
+      await navigator.clipboard.writeText(id);
+      showToast('ID скопирован');
+      haptic('notify', 'success');
+    } catch(e){}
+  });
+
+  /* ============================================================
+     ==== ОБРАБОТКА НАСТРОЕК ====================================
+     ============================================================ */
+  document.getElementById('fontControl').addEventListener('click', e => {
+    const btn = e.target.closest('.font-opt');
+    if (!btn) return;
+    const f = btn.dataset.font;
+    if (f === Settings.data.font) return;
+    Settings.set('font', f);
+    applySettings();
+    showToast('Шрифт изменён');
+    haptic('selection');
+  });
+
+  document.getElementById('accentControl').addEventListener('click', e => {
+    const btn = e.target.closest('.accent-swatch');
+    if (!btn) return;
+    const a = btn.dataset.accent;
+    if (a === Settings.data.accent) return;
+    Settings.set('accent', a);
+    applySettings();
+    showToast('Акцент изменён');
+    haptic('selection');
+  });
+
+  document.getElementById('switchAnimations').addEventListener('click', () => {
+    Settings.set('animations', !Settings.data.animations);
+    applySettings();
+    haptic('impact', 'light');
+  });
+
+  document.getElementById('switchHaptics').addEventListener('click', () => {
+    Settings.set('haptics', !Settings.data.haptics);
+    applySettings();
+    if (Settings.data.haptics) haptic('impact', 'light');
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('Сбросить все настройки?')) return;
+    Settings.reset(); Settings.load();
+    applySettings();
+    showToast('Настройки сброшены');
+    haptic('notify', 'success');
+  });
+
+  /* ============================================================
+     ==== TELEGRAPH API =========================================
+     ============================================================ */
+  const TG_API = 'https://api.telegra.ph';
+  const TOKEN_BOT  = 'horshmarny_tg_token_bot';
+  const TOKEN_ANON = 'horshmarny_tg_token_anon';
+
+  async function telegraphPost(method, body){
+    const res = await fetch(`${TG_API}/${method}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Telegraph error');
+    return data.result;
+  }
+
+  async function getToken(anon){
+    const key = anon ? TOKEN_ANON : TOKEN_BOT;
+    const cached = localStorage.getItem(key);
+    if (cached) return cached;
+
+    const payload = anon
+      ? { short_name: 'hx', author_name: '' }
+      : { short_name: 'hx', author_name: 'Horshmarny × TheFer' };
+
+    const result = await telegraphPost('createAccount', payload);
+    const token = result.access_token;
+    try { localStorage.setItem(key, token); } catch(e){}
+    return token;
+  }
+
+  async function createTelegraphPage({ title, text, anon }){
+    const token = await getToken(anon);
+    const content = text
+      .split('\n')
+      .map(line => line.trim() ? { tag: 'p', children: [line] } : { tag: 'p', children: [''] });
+
+    const body = {
+      access_token: token,
+      title: title,
+      content: content,
+      return_content: false
+    };
+    if (!anon) body.author_name = 'Horshmarny × TheFer';
+
+    return await telegraphPost('createPage', body);
+  }
+
+  /* ============================================================
+     ==== МОДАЛКА ПРЕВЬЮ ========================================
+     ============================================================ */
+  const modal = document.getElementById('previewModal');
+  const stepForm = document.getElementById('stepForm');
+  const stepResult = document.getElementById('stepResult');
+  const pvTitle = document.getElementById('pvTitle');
+  const pvText = document.getElementById('pvText');
+  const pvVisibility = document.getElementById('pvVisibility');
+  const pvSubmit = document.getElementById('pvSubmit');
+  const pvLink = document.getElementById('pvLink');
+  const pvOpen = document.getElementById('pvOpen');
+  let pvVis = 'bot';
+
+  if (!canAnon){
+    const anonBtn = pvVisibility.querySelector('[data-vis="anon"]');
+    anonBtn.classList.add('disabled');
+    anonBtn.disabled = true;
+    anonBtn.title = 'Доступно только админам';
+  }
+
+  function openModal(){
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    stepForm.style.display = '';
+    stepResult.style.display = 'none';
+    haptic('impact', 'light');
+  }
+  function closeModal(){
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+  }
+
+  document.getElementById('openPreviewModal').addEventListener('click', openModal);
+
+  // Кнопка "Новости проекта" с главной — переключает на таб новостей
+  document.getElementById('openNewsFromHome').addEventListener('click', () => {
+    const newsTab = document.querySelector('.tab[data-tab="news"]');
+    if (newsTab) newsTab.click();
+  });
+
+  modal.addEventListener('click', e => {
+    if (e.target.dataset.close) closeModal();
+  });
+
+  pvVisibility.addEventListener('click', e => {
+    const btn = e.target.closest('.seg');
+    if (!btn || btn.disabled) return;
+    pvVisibility.querySelectorAll('.seg').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    pvVis = btn.dataset.vis;
+    haptic('selection');
+  });
+
+  pvSubmit.addEventListener('click', async () => {
+    const title = pvTitle.value.trim();
+    const text  = pvText.value.trim();
+
+    if (!title){ showToast('Введите заголовок'); pvTitle.focus(); return }
+    if (!text){ showToast('Введите текст'); pvText.focus(); return }
+
+    const anon = pvVis === 'anon';
+    if (anon && !canAnon){
+      showToast('Анонимно только для админов');
+      return;
+    }
+
+    pvSubmit.disabled = true;
+    const original = pvSubmit.innerHTML;
+    pvSubmit.innerHTML = '<span class="modal-spinner"></span><span>Создаём…</span>';
+
+    try {
+      const result = await createTelegraphPage({ title, text, anon });
+      pvLink.textContent = result.url;
+      pvOpen.href = result.url;
+
+      stepForm.style.display = 'none';
+      stepResult.style.display = '';
+      haptic('notify', 'success');
+    } catch(err){
+      showToast('Ошибка: ' + (err.message || 'не удалось создать'));
+      haptic('notify', 'error');
+    } finally {
+      pvSubmit.disabled = false;
+      pvSubmit.innerHTML = original;
+    }
+  });
+
+  document.getElementById('pvCopy').addEventListener('click', async () => {
+    const url = pvLink.textContent;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Ссылка скопирована');
+      haptic('notify', 'success');
+    } catch(e){
+      const tmp = document.createElement('textarea');
+      tmp.value = url;
+      document.body.appendChild(tmp);
+      tmp.select();
+      try { document.execCommand('copy'); showToast('Ссылка скопирована'); } catch(e2){}
+      document.body.removeChild(tmp);
+    }
+  });
+
+  document.getElementById('pvReset').addEventListener('click', () => {
+    pvTitle.value = '';
+    pvText.value = '';
+    stepForm.style.display = '';
+    stepResult.style.display = 'none';
+  });
+
+  /* ============================================================
+     ==== КАНВАС С ЧАСТИЦАМИ ====================================
+     ============================================================ */
+  const canvas = document.getElementById('fx');
+  const ctx = canvas.getContext('2d');
+  let W=0, H=0, DPR=1;
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.width  = Math.floor(innerWidth  * DPR);
+    H = canvas.height = Math.floor(innerHeight * DPR);
+    canvas.style.width  = innerWidth  + 'px';
+    canvas.style.height = innerHeight + 'px';
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  const particles = [];
+  const ACCENT_COLORS = {
+    crimson: ['#c8102e','#8b0a1e','#ff2a4a'],
+    wine:    ['#8a1232','#5c0c22','#c73a5c'],
+    ember:   ['#d4531f','#8c2f10','#ff7733'],
+    plum:    ['#7a2b7a','#4a1a4a','#c14fc1']
+  };
+  function spawn(cx, cy, count, power){
+    const colors = ACCENT_COLORS[Settings.data.accent] || ACCENT_COLORS.crimson;
+    for (let i=0; i<count; i++){
+      const a  = Math.random() * Math.PI * 2;
+      const sp = (Math.random() * power + 0.4) * DPR;
+      particles.push({
+        x: cx*DPR, y: cy*DPR,
+        vx: Math.cos(a)*sp, vy: Math.sin(a)*sp,
+        life: 1,
+        decay: 0.006 + Math.random()*0.012,
+        size: (Math.random()*1.6 + 0.6)*DPR,
+        color: colors[(Math.random()*colors.length)|0]
+      });
+    }
+  }
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    for (let i=particles.length-1; i>=0; i--){
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.97; p.vy *= 0.97;
+      p.vy += 0.008 * DPR;
+      p.life -= p.decay;
+      if (p.life <= 0){ particles.splice(i,1); continue; }
+      ctx.globalAlpha = p.life * 0.9;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // Всплески: под имена и под появление контента
+  setTimeout(()=>spawn(innerWidth/2, innerHeight/2, 40, 2), 800);
+  setTimeout(()=>spawn(innerWidth/2, innerHeight/2, 26, 1.6), 1200);
+  setTimeout(()=>spawn(innerWidth/2, innerHeight/2, 30, 1.8), 2700);
+
+  /* ============================================================
+     ==== ЗАГРУЗКА 3с ===========================================
+     ============================================================ */
+  if (Settings.data.animations){
+    const pctEl = document.getElementById('pct');
+    const start = performance.now();
+    const DURATION = 3000;
+    const ease = x => 1 - Math.pow(1 - x, 2.2);
+    (function tick(now){
+      const p = Math.min((now - start) / DURATION, 1);
+      if (pctEl) pctEl.textContent = Math.round(ease(p)*100) + '%';
+      if (p < 1){
+        requestAnimationFrame(tick);
+      } else {
+        if (pctEl) pctEl.textContent = '100%';
+        setTimeout(() => {
+          document.getElementById('tabbar').classList.add('show');
+          haptic('notify', 'success');
+        }, 120);
+      }
+    })(performance.now());
+    haptic('impact', 'soft');
+  } else {
+    document.getElementById('tabbar').classList.add('show');
+  }
+
+  /* ============================================================
+     ==== ПЕРЕКЛЮЧЕНИЕ ТАБОВ ====================================
+     ============================================================ */
+  const tabs = document.querySelectorAll('.tab');
+  const pages = document.querySelectorAll('.page');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      if (tab.classList.contains('active')) return;
+      tabs.forEach(x => {
+        const on = x === tab;
+        x.classList.toggle('active', on);
+        x.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      pages.forEach(p => p.classList.toggle('active', p.dataset.page === target));
+      haptic('impact', 'light');
+    });
+  });
+
+  /* ============================================================
+     ==== INIT ==================================================
+     ============================================================ */
+  applySettings();
+})();
+</script>
+</body>
+</html>
