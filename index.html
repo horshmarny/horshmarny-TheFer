@@ -19,6 +19,7 @@
     --text-dim:#6a6a72;
     --text-faint:#3a3a42;
     --line:rgba(255,255,255,0.07);
+    --panel:linear-gradient(180deg, #150c10 0%, #0e070a 100%);
 
     --name-size: clamp(30px, 10.5vw, 82px);
     --cross-size: clamp(22px, 5.5vw, 46px);
@@ -43,7 +44,6 @@
     -moz-osx-font-smoothing:grayscale;
   }
 
-  /* ==== Фон: сетка ==== */
   .grid{
     position:fixed;inset:0;pointer-events:none;z-index:1;
     background-image:
@@ -59,7 +59,6 @@
     pointer-events:none;z-index:2;
   }
 
-  /* ==== Угловые метки ==== */
   .corner{
     position:fixed;
     top:calc(env(safe-area-inset-top, 0px) + 18px);
@@ -92,6 +91,8 @@
     pointer-events:none;
     transform: translateY(6px);
     transition: opacity .38s ease, transform .38s ease;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
   }
   .page.active{
     opacity:1;
@@ -99,7 +100,7 @@
     transform: translateY(0);
   }
 
-  /* ==== Главная: коллаборация ==== */
+  /* ==== ГЛАВНАЯ ==== */
   .names{
     display:flex;flex-direction:column;
     align-items:center;justify-content:center;
@@ -193,7 +194,156 @@
     to{opacity:1; transform: translateY(0)}
   }
 
-  /* ==== Пустые страницы (Профиль / Настройки) ==== */
+  /* ==== ПРОФИЛЬ ==== */
+  .profile-card{
+    width: min(92vw, 420px);
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 24px;
+    padding: clamp(22px, 5vw, 32px) clamp(18px, 4.5vw, 28px);
+    box-shadow:
+      0 20px 50px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(200,16,46,0.05),
+      inset 0 1px 0 rgba(255,255,255,0.035);
+    position: relative;
+    text-align:center;
+  }
+  .profile-card::before{
+    content:'';
+    position:absolute;top:0;left:20%;right:20%;height:1px;
+    background:linear-gradient(90deg, transparent, rgba(200,16,46,.55), transparent);
+  }
+
+  /* --- Аватарка --- */
+  .avatar-wrap{
+    position: relative;
+    width: clamp(78px, 22vw, 96px);
+    height: clamp(78px, 22vw, 96px);
+    margin: 0 auto 16px;
+  }
+  .avatar-ring{
+    position:absolute;inset:-3px;
+    border-radius:50%;
+    background: conic-gradient(from 180deg, var(--blood) 0%, #2a0a12 40%, var(--blood-bright) 60%, #2a0a12 100%);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 3px));
+            mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 3px));
+    opacity:.9;
+    filter: drop-shadow(0 0 14px rgba(200,16,46,.35));
+  }
+  .avatar{
+    width:100%;height:100%;
+    border-radius:50%;
+    object-fit:cover;
+    display:block;
+    background:#150c10;
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .avatar-fallback{
+    position:absolute;inset:0;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background: linear-gradient(180deg, #2a0f16, #150c10);
+    color: var(--blood);
+    font-family:'Inter', sans-serif;
+    font-weight:700;
+    font-size: clamp(28px, 8vw, 34px);
+    letter-spacing: -0.03em;
+    border:1px solid rgba(255,255,255,.06);
+    text-shadow: 0 0 20px var(--blood-glow);
+  }
+
+  /* --- Имя и роль --- */
+  .profile-name{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size: clamp(20px, 5.5vw, 26px);
+    letter-spacing:-0.03em;
+    color: var(--text);
+    margin: 0 0 6px;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .profile-role{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 99px;
+    background: rgba(200,16,46,0.10);
+    border: 1px solid rgba(200,16,46,0.28);
+    color: var(--blood-bright);
+    font-family:'JetBrains Mono', monospace;
+    font-size: clamp(9px, 2.2vw, 10.5px);
+    font-weight: 500;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+  }
+  .profile-role .role-dot{
+    width:6px;height:6px;border-radius:50%;
+    background: var(--blood-bright);
+    box-shadow: 0 0 8px var(--blood-glow);
+    animation: rolePulse 2.4s ease-in-out infinite;
+  }
+  @keyframes rolePulse{
+    0%,100%{ opacity:1 }
+    50%{ opacity:.4 }
+  }
+
+  /* --- Строки с данными --- */
+  .profile-rows{
+    display:flex;flex-direction:column;
+    gap: 0;
+    border-top: 1px solid var(--line);
+    margin-top: 4px;
+  }
+  .prow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--line);
+    font-size: clamp(12px, 3.2vw, 13.5px);
+    text-align:left;
+  }
+  .pkey{
+    font-family:'JetBrains Mono', monospace;
+    font-size: clamp(9.5px, 2.4vw, 10.5px);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    flex-shrink: 0;
+  }
+  .pval{
+    font-weight: 500;
+    color: var(--text);
+    text-align:right;
+    word-break: break-word;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+  }
+  .pval.mono{
+    font-family:'JetBrains Mono', monospace;
+    font-size: clamp(11px, 3vw, 12.5px);
+    letter-spacing: -.01em;
+  }
+  .pval.dim{ color: var(--text-dim); }
+  .pval .copy-btn{
+    background:none;border:none;color:inherit;
+    font:inherit;padding:0;cursor:pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .pval .copy-btn svg{
+    width: 12px;height:12px;
+    stroke: currentColor; stroke-width: 2;
+    fill:none; stroke-linecap: round; stroke-linejoin: round;
+    opacity:.5;
+  }
+  .pval .copy-btn:active svg{ opacity:1 }
+
+  /* ==== ПУСТЫЕ СТРАНИЦЫ (Настройки) ==== */
   .page-header{
     font-family:'JetBrains Mono', monospace;
     font-size: clamp(9px, 2.2vw, 11px);
@@ -270,7 +420,7 @@
   }
 
   /* ============================================================
-     ==== НИЖНЕЕ МЕНЮ (TAB BAR) ================================
+     ==== НИЖНЕЕ МЕНЮ ==========================================
      ============================================================ */
   .tabbar{
     position:fixed;
@@ -344,7 +494,6 @@
     transition: opacity .25s ease;
   }
 
-  /* Активный таб */
   .tab.active .tab-icon{
     background: linear-gradient(180deg, var(--blood-bright) 0%, var(--blood) 100%);
     box-shadow:
@@ -352,9 +501,7 @@
       0 0 0 1px rgba(255,42,63,0.4),
       inset 0 1px 0 rgba(255,255,255,0.18);
   }
-  .tab.active .tab-label{
-    opacity: 1;
-  }
+  .tab.active .tab-label{ opacity: 1; }
 
   /* ==== Адаптив ==== */
   @media (min-width:768px){
@@ -410,14 +557,48 @@
     <div class="name right">TheFer<span class="star">*</span></div>
   </div>
   <div class="divider"><span class="dot"></span></div>
-  <div class="tagline">коллаборация</div>
+  <div class="tagline">Collaboration</div>
 </div>
 
 <!-- ============ ПРОФИЛЬ ============ -->
 <div class="page" data-page="profile">
-  <div class="page-header">Section 02</div>
-  <h1 class="page-title">Профиль</h1>
-  <p class="page-sub">Здесь будет информация о вас, история активности и статистика. Скоро.</p>
+  <div class="profile-card">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar" id="avatar" alt="" style="display:none">
+      <div class="avatar-fallback" id="avatarFallback">?</div>
+    </div>
+
+    <h2 class="profile-name" id="profileName">Загрузка…</h2>
+    <div class="profile-role" id="profileRole">
+      <span class="role-dot"></span>
+      <span id="profileRoleText">Пользователь</span>
+    </div>
+
+    <div class="profile-rows">
+      <div class="prow">
+        <span class="pkey">ID</span>
+        <span class="pval mono">
+          <button class="copy-btn" id="copyId" type="button" title="Копировать">
+            <span id="profileId">—</span>
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          </button>
+        </span>
+      </div>
+      <div class="prow">
+        <span class="pkey">Username</span>
+        <span class="pval mono dim" id="profileUsername">—</span>
+      </div>
+      <div class="prow">
+        <span class="pkey">Запуск бота</span>
+        <span class="pval mono" id="profileStarted">—</span>
+      </div>
+      <div class="prow">
+        <span class="pkey">Язык</span>
+        <span class="pval mono dim" id="profileLang">—</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ============ НАСТРОЙКИ ============ -->
@@ -431,7 +612,7 @@
 <div class="loader" id="loader">
   <div class="loader-bar"><div class="loader-fill"></div></div>
   <div class="loader-meta">
-    <span>загрузка</span>
+    <span>Loading</span>
     <span class="pct" id="pct">0%</span>
   </div>
 </div>
@@ -465,7 +646,16 @@
 
 <script>
 (function(){
-  // ===== Telegram WebApp =====
+  /* ============================================================
+     ==== НАСТРОЙКА РОЛЕЙ ======================================
+     Укажи ID владельца и админов через запятую.
+     ============================================================ */
+  const OWNER_ID = 8552283918;                 // ← вписать Telegram ID владельца
+  const ADMIN_IDS = [];               // ← вписать ID админов, напр. [123456, 789101]
+
+  // ============================================================
+  // ==== Telegram WebApp =======================================
+  // ============================================================
   const tg = window.Telegram && window.Telegram.WebApp;
   if (tg){
     tg.ready();
@@ -474,7 +664,122 @@
     try { tg.setBackgroundColor && tg.setBackgroundColor('#08070a'); } catch(e){}
   }
 
-  // ===== Канвас с частицами =====
+  // ============================================================
+  // ==== Заполнение профиля ====================================
+  // ============================================================
+  const user = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) || null;
+
+  function fillProfile(u){
+    if (!u){
+      // Вне Telegram — показываем демо-данные
+      u = {
+        id: 0,
+        first_name: 'Гость',
+        last_name: '',
+        username: 'guest',
+        language_code: 'ru',
+        photo_url: ''
+      };
+    }
+
+    // --- Аватарка ---
+    const img = document.getElementById('avatar');
+    const fb  = document.getElementById('avatarFallback');
+
+    if (u.photo_url){
+      img.src = u.photo_url;
+      img.style.display = 'block';
+      fb.style.display = 'none';
+      img.onerror = () => {
+        img.style.display = 'none';
+        fb.style.display = 'grid';
+      };
+    } else {
+      // инициалы
+      const initials = ((u.first_name || '?')[0] + (u.last_name ? u.last_name[0] : '')).toUpperCase();
+      fb.textContent = initials || '?';
+    }
+
+    // --- Имя ---
+    const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ').trim() || 'Без имени';
+    document.getElementById('profileName').textContent = fullName;
+
+    // --- ID ---
+    document.getElementById('profileId').textContent = u.id || '—';
+
+    // --- Username ---
+    const unameEl = document.getElementById('profileUsername');
+    unameEl.textContent = u.username ? '@' + u.username : 'скрыт';
+
+    // --- Язык ---
+    const langMap = { ru:'Русский', en:'English', uk:'Українська', be:'Беларуская', kk:'Қазақша', de:'Deutsch', es:'Español', fr:'Français', tr:'Türkçe', it:'Italiano' };
+    const langEl = document.getElementById('profileLang');
+    langEl.textContent = langMap[u.language_code] || (u.language_code || '—').toUpperCase();
+
+    // --- Роль ---
+    const roleText = document.getElementById('profileRoleText');
+    const roleBox  = document.getElementById('profileRole');
+    if (u.id && OWNER_ID && u.id === OWNER_ID){
+      roleText.textContent = 'Владелец';
+      roleBox.style.background = 'rgba(200,16,46,0.18)';
+      roleBox.style.borderColor = 'rgba(200,16,46,0.5)';
+    } else if (u.id && ADMIN_IDS.includes(u.id)){
+      roleText.textContent = 'Администратор';
+    } else {
+      roleText.textContent = 'Пользователь';
+    }
+
+    // --- Когда запустил бота ---
+    const startEl = document.getElementById('profileStarted');
+    let startedAt = null;
+
+    // 1) URL-параметр ?started=2025-01-15T12:30:00Z или timestamp
+    const url = new URL(location.href);
+    const fromUrl = url.searchParams.get('started');
+    if (fromUrl){
+      const d = /^\d+$/.test(fromUrl) ? new Date(parseInt(fromUrl, 10) * 1000) : new Date(fromUrl);
+      if (!isNaN(d)) startedAt = d.toISOString();
+    }
+
+    // 2) localStorage (сохраняем при первом заходе)
+    const LS_KEY = 'horshmarny_started_at_' + (u.id || 'guest');
+    if (!startedAt){
+      startedAt = localStorage.getItem(LS_KEY);
+    }
+    if (!startedAt){
+      startedAt = new Date().toISOString();
+      try { localStorage.setItem(LS_KEY, startedAt); } catch(e){}
+    }
+
+    startEl.textContent = formatDate(new Date(startedAt));
+  }
+
+  function formatDate(d){
+    const pad = n => String(n).padStart(2,'0');
+    const day = pad(d.getDate());
+    const mon = pad(d.getMonth()+1);
+    const yr  = d.getFullYear();
+    const hh  = pad(d.getHours());
+    const mm  = pad(d.getMinutes());
+    return `${day}.${mon}.${yr} · ${hh}:${mm}`;
+  }
+
+  fillProfile(user);
+
+  // --- Копирование ID ---
+  document.getElementById('copyId').addEventListener('click', async () => {
+    const id = document.getElementById('profileId').textContent;
+    try {
+      await navigator.clipboard.writeText(id);
+      if (tg && tg.HapticFeedback){
+        try { tg.HapticFeedback.notificationOccurred('success'); } catch(e){}
+      }
+    } catch(e){}
+  });
+
+  // ============================================================
+  // ==== Канвас с частицами ====================================
+  // ============================================================
   const canvas = document.getElementById('fx');
   const ctx = canvas.getContext('2d');
   let W=0, H=0, DPR=1;
@@ -527,7 +832,9 @@
   setTimeout(()=>spawn(innerWidth/2, innerHeight/2, 44, 2.2), 800);
   setTimeout(()=>spawn(innerWidth/2, innerHeight/2, 32, 1.8), 1200);
 
-  // ===== Проценты загрузки (3 сек) =====
+  // ============================================================
+  // ==== Проценты загрузки (3 сек) =============================
+  // ============================================================
   const pctEl = document.getElementById('pct');
   const start = performance.now();
   const DURATION = 3000;
@@ -540,7 +847,6 @@
       requestAnimationFrame(tick);
     } else {
       if (pctEl) pctEl.textContent = '100%';
-      // показать меню после загрузки
       setTimeout(() => {
         document.getElementById('tabbar').classList.add('show');
         if (tg && tg.HapticFeedback){
@@ -554,7 +860,9 @@
     try { tg.HapticFeedback.impactOccurred('soft'); } catch(e){}
   }
 
-  // ===== Переключение табов =====
+  // ============================================================
+  // ==== Переключение табов ====================================
+  // ============================================================
   const tabs = document.querySelectorAll('.tab');
   const pages = document.querySelectorAll('.page');
 
